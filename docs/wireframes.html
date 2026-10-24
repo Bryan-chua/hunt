@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Don't Get Caught — wireframe review</title>
+<style>
+:root{color-scheme:light;--ink:#182229;--muted:#53616b;--line:#ccd3d6;--paper:#fff;--bg:#f3f5f4;--accent:#253b36}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif}main{max-width:1080px;margin:auto;padding:32px 20px}h1{font-size:28px;margin:0}h2{font-size:21px;margin:0}h3{font-size:16px;margin:0}p{margin:8px 0 16px}.muted,small{color:var(--muted)}nav{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0}button{font:inherit;cursor:pointer;border:1px solid var(--line);border-radius:8px;padding:10px 14px;background:var(--paper);color:var(--ink)}button[aria-pressed=true],.primary{background:var(--accent);color:white;border-color:var(--accent)}button:focus-visible{outline:3px solid #649f92;outline-offset:3px}button:disabled{cursor:default;opacity:.55}.layout{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:40px;align-items:start}.screen{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:20px;min-width:0}.top{display:flex;justify-content:space-between;gap:12px;align-items:start;border-bottom:1px solid var(--line);padding-bottom:14px}.eyebrow{font-size:12px;letter-spacing:1px;text-transform:uppercase}.timer{font-size:28px;font-variant-numeric:tabular-nums}.timers{display:flex;justify-content:space-between;gap:12px;margin:16px 0}.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.row span{min-width:0}.badge{font-size:13px;padding:3px 7px;background:#edf1ef;border-radius:4px;white-space:nowrap}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.actions button{flex:1}.notice{background:#eef2f0;padding:12px;margin:14px 0;border-left:3px solid var(--accent)}.map{height:260px;position:relative;background:repeating-linear-gradient(0deg,transparent,transparent 43px,#e1e6e2 44px,#e1e6e2 46px),repeating-linear-gradient(90deg,#f5f7f5,#f5f7f5 58px,#e1e6e2 59px,#e1e6e2 61px);overflow:hidden;border:1px solid var(--line)}.zone{position:absolute;inset:26px 12%;border:2px dashed #788b83;border-radius:50%}.pin{position:absolute;background:var(--paper);border:1px solid var(--ink);padding:3px 7px;font-size:13px;border-radius:4px;max-width:70%}.self{left:40%;top:65%;background:var(--accent);color:white}.a{left:17%;top:28%}.b{right:8%;top:49%}.map-caption{position:absolute;bottom:3px;left:6px;font-size:11px;color:var(--muted);background:var(--paper)}aside{padding-top:8px}li{margin:10px 0}a{color:var(--accent)}dialog{max-width:400px;width:calc(100% - 32px);border:1px solid var(--line);border-radius:16px;padding:24px}dialog::backdrop{background:#18222977}[hidden]{display:none!important}@media(max-width:720px){.layout{grid-template-columns:1fr;gap:24px}main{padding:24px 14px}.screen{max-width:440px;width:100%;margin:auto}h1{font-size:24px}}@media print{nav,.actions,dialog{display:none}.layout{grid-template-columns:1fr 1fr}body{background:white}}
+</style>
+</head>
+<body><main>
+<div class="eyebrow">Planning / Draft 01 / 24 October 2026</div>
+<h1>Don't Get Caught</h1>
+<p class="muted">Four core screens for a 20–50 player event. Illustrative data and schematic maps; no GPS or game connection.</p>
+<nav aria-label="Choose a wireframe">
+<button type="button" data-view="lobby" aria-pressed="true">Lobby</button>
+<button type="button" data-view="host" aria-pressed="false">Host dashboard</button>
+<button type="button" data-view="hunter" aria-pressed="false">Hunter map</button>
+<button type="button" data-view="runner" aria-pressed="false">Runner map</button>
+</nav>
+<div class="layout">
+<section class="screen" aria-label="App screen wireframe">
+<div id="lobby" class="view">
+<header class="top"><div><div class="eyebrow">Host · Lobby</div><h2>Saturday Chase</h2></div><span class="badge">24 / 50</span></header>
+<p>Join code <strong>CHASE7</strong></p>
+<div class="notice">45-minute hunt · 3-minute head start<br>Runner locations revealed every 3 minutes</div>
+<div class="row"><strong>Ready to play</strong><span>22 / 24</span></div>
+<div class="row"><span>Maya · Hunter</span><span class="badge">Ready</span></div>
+<div class="row"><span>Jon · Runner</span><span class="badge">Ready</span></div>
+<div class="row"><span>Alex · Runner</span><span class="badge">GPS needed</span></div>
+<div class="row"><span>Sam · Hunter</span><span class="badge">Not ready</span></div>
+<p><small>4 hunters · 20 runners · 1 non-playing organizer</small></p>
+<div class="notice">Location consent: hunters receive runner snapshots. Non-playing organizers see live positions during play.</div>
+<div class="actions"><button disabled>Start · waiting for 2</button></div>
+</div>
+<div id="host" class="view" hidden>
+<header class="top"><div><div class="eyebrow">Organizer · Hunt in progress</div><h2>Saturday Chase</h2></div><span class="badge">Live overview</span></header>
+<div class="timers"><div><small>Hunt remaining</small><div class="timer">32:18</div></div><div><small>Next reveal</small><div class="timer">02:18</div></div></div>
+<div class="row"><span>Runners</span><strong>17 active · 3 caught</strong></div>
+<div class="row"><span>Hunters</span><strong>4 active</strong></div>
+<div class="map" role="img" aria-label="Schematic organizer live map with two player positions and play boundary"><div class="zone"></div><span class="pin a">Maya · Hunter · 4s</span><span class="pin b">Jon · Runner · 8s</span><span class="map-caption">Schematic · selected players shown</span></div>
+<div class="row"><span>Alex · No fresh GPS</span><span class="badge">Last fix 74s</span></div>
+<div class="row"><span>Sam · Disconnected</span><span class="badge">Last seen 58s</span></div>
+<div class="actions"><button type="button" id="pause">Pause round</button><button type="button" id="end">End early</button></div>
+<p id="host-status" class="muted" aria-live="polite">Demo controls affect this preview only.</p>
+</div>
+<div id="hunter" class="view" hidden>
+<header class="top"><div><div class="eyebrow">Hunter · Hunt in progress</div><h2>Find the runners</h2></div><span class="badge">17 left</span></header>
+<div class="timers"><div><small>Hunt remaining</small><div class="timer">32:18</div></div><div><small>Next reveal</small><div class="timer">02:18</div></div></div>
+<div class="map" role="img" aria-label="Schematic hunter map: own position and frozen runner snapshots"><div class="zone"></div><span class="pin a">Jon · 47s ago</span><span class="pin b">Priya · 49s ago</span><span class="pin self">You</span><span class="map-caption">Schematic · snapshot locations</span></div>
+<div class="notice">Runner markers stay still until the next reveal.</div>
+<div class="row"><span>Jon · sample age 47s</span><span>±12m</span></div>
+<div class="row"><span>Alex · No fresh location</span><span class="badge">Stale</span></div>
+<p><small>Latest batch: reveal #5 · 42 seconds ago. Sample age includes the time before release.</small></p>
+</div>
+<div id="runner" class="view" hidden>
+<header class="top"><div><div class="eyebrow">Runner · Hunt in progress</div><h2>Stay uncaught</h2></div><span class="badge">Active</span></header>
+<div class="timers"><div><small>Survive for</small><div class="timer">32:18</div></div><div><small>Your next reveal</small><div class="timer">02:18</div></div></div>
+<div class="map" role="img" aria-label="Schematic runner map showing only own position and play boundary"><div class="zone"></div><span class="pin self">You</span><span class="map-caption">Schematic · own position only</span></div>
+<div class="notice">Your location is shared with hunters every 3 minutes. Non-playing organizers can see you live.</div>
+<div class="row"><span>Location sharing active</span><span>Updated 8s ago</span></div>
+<div class="actions"><button type="button" class="primary" id="caught">I've been caught</button></div>
+<p id="runner-status" class="muted" aria-live="polite">Inside play area · Connected</p>
+</div>
+</section>
+<aside aria-live="polite"><h2 id="note-title"></h2><p id="note-intro"></p><ul id="note-list"></ul><p><a href="game-spec.txt">Read the complete rules specification</a></p></aside>
+</div>
+<dialog id="confirm"><h2 id="dialog-title"></h2><p id="dialog-copy"></p><div class="actions"><button type="button" id="cancel">Cancel</button><button type="button" class="primary" id="confirm-action">Confirm</button></div></dialog>
+</main>
+<script>
+const notes={
+lobby:['Lobby and readiness','The event begins only when the included roster is ready.',['Host assigns roles and configures the boundary before starting.','Players explicitly accept the location visibility rules.','Missing GPS, permission or readiness blocks start until fixed or that player is removed.','This sample shows a subset of the 24-player roster.']],
+host:['Organizer control','This view belongs to a non-playing organizer.',['A playing host gets administrative controls with their role’s restricted map.','Freshness, accuracy and connection are separate signals.','Pause freezes timers and location sharing; end early cancels the round.','A real roster supports player details, removals and capture corrections.']],
+hunter:['Snapshots, every three minutes','A revealed position is a clue, not continuous tracking.',['Pins retain their position between reveal batches.','Actual GPS sample age and accuracy must remain visible.','A missing update never becomes a fabricated fresh location.','No unreleased coordinates are delivered to this player.']],
+runner:['Timing and capture','The runner sees their own position and when it will next be revealed.',['Hunters and other runners are hidden in version one.','The capture button opens a confirmation step; try it here.','A real capture requires a server acknowledgment before success.','Leaving the round and contacting the organizer belong in the in-game menu.']]};
+function show(view){document.querySelectorAll('.view').forEach(e=>e.hidden=e.id!==view);document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===view)));const n=notes[view];document.getElementById('note-title').textContent=n[0];document.getElementById('note-intro').textContent=n[1];document.getElementById('note-list').replaceChildren(...n[2].map(t=>{const li=document.createElement('li');li.textContent=t;return li;}));}
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.view)));
+const modal=document.getElementById('confirm');let action=null;
+function confirmAction(title,copy,callback){document.getElementById('dialog-title').textContent=title;document.getElementById('dialog-copy').textContent=copy;action=callback;modal.showModal();}
+document.getElementById('cancel').onclick=()=>modal.close();
+document.getElementById('confirm-action').onclick=()=>{modal.close();if(action)action();};
+document.getElementById('caught').onclick=()=>confirmAction('Confirm capture?','Confirm only after an agreed in-person tag. This preview demonstrates the caught state.',()=>{document.getElementById('runner-status').textContent='Demo: capture confirmed. Tracking stopped; waiting for results.';document.querySelector('#runner .map').hidden=true;document.querySelector('#runner .notice').textContent='You are caught. Location sharing has stopped.';document.getElementById('caught').disabled=true;document.querySelector('#runner .row').textContent='Location sharing stopped';document.querySelector('#runner .badge').textContent='Caught';document.querySelector('#runner .timers').hidden=true;});
+let paused=false;
+document.getElementById('pause').onclick=()=>{paused=!paused;document.getElementById('pause').textContent=paused?'Resume round':'Pause round';document.getElementById('host-status').textContent=paused?'Demo: round paused. Timers and location sharing frozen.':'Demo: round resumed with remaining time preserved.';document.querySelector('#host .badge').textContent=paused?'Paused':'Live overview';};
+document.getElementById('end').onclick=()=>confirmAction('End this round early?','This records a canceled round rather than declaring a winner.',()=>{document.getElementById('host-status').textContent='Demo: round canceled by organizer. Location sharing stopped.';document.getElementById('pause').disabled=true;document.getElementById('end').disabled=true;document.querySelector('#host .map').hidden=true;document.querySelector('#host .badge').textContent='Canceled';document.querySelector('#host .timers').hidden=true;});
+show('lobby');
+</script></body></html>

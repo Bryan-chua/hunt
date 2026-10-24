@@ -1,0 +1,10 @@
+node_modules/
+data/
+.npm-cache/
+.expo/
+dist/
+mobile/dist-*/
+.env
+*.log
+mobile/android/
+mobile/ios/

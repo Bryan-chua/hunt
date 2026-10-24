@@ -1,0 +1,196 @@
+DON'T GET CAUGHT — FIRST PLAYABLE SPECIFICATION
+Draft 1 · 24 October 2026 · For review before implementation
+
+1. CONFIRMED SCOPE
+iPhone and Android; private organized events with 20–50 players; hunters
+and runners; all active runners revealed together every three minutes;
+runners confirm agreed in-person tags. The host can organize without playing.
+This document and the wireframes are planning artifacts, not working features.
+
+2. PROPOSED DEFAULTS — REVIEWABLE, NOT YET CONFIRMED
+Three-minute head start; 45-minute hunt; circular play area; on-foot play.
+Host sets head start, hunt duration, center and radius before starting.
+Reveal interval remains fixed at 180 seconds for version one.
+At least one hunter and one runner; maximum 50 playing participants.
+A non-playing organizer does not consume a playing participant slot.
+Players cannot join an active round. No conversion from runner to hunter.
+No teammate locations, hunter locations for runners, or spectator maps in v1.
+The non-playing organizer sees live positions, with this disclosed before ready.
+A playing host sees only the locations permitted by their playing role.
+
+3. LIFECYCLE AND CLOCK
+Lobby -> Head start -> Hunt -> Finished. Head start and Hunt can be Paused.
+Canceled is a separate terminal state when a host ends a round early.
+The server owns state, deadlines and authoritative timestamps. Closing a host
+phone does not pause or end the round. The lobby's roster and settings lock
+at start. A new round requires a new lobby/readiness cycle.
+
+Starting requires every included player to be ready, location sharing accepted,
+permissions available and a location sample received within the last 30 seconds.
+Host may remove an unready player before starting, but cannot waive consent.
+Ready is cleared when role/settings change or the player disconnects.
+
+The hunt clock starts when the head start ends. The first reveal occurs then;
+subsequent reveals occur at hunt elapsed times 03:00, 06:00, 09:00, etc.
+At the hunt deadline the round finishes; no new reveal occurs at that instant.
+Hunters win when every runner is captured. If at least one runner survives
+until the deadline, runners win. If all remaining runners withdraw, cancel
+with reason 'No active runners'; do not count withdrawals as captures.
+If all hunters withdraw, cancel with reason 'No active hunters'.
+
+Pause freezes remaining phase time and time until next reveal. Resume continues
+both values; it does not grant a free reveal. During pause all maps freeze and
+position uploads stop. Resume requests a fresh sample; missing data is marked
+unavailable. Players agree to stop moving during pause. Immediate resume is
+possible, but cannot guarantee an immediately fresh GPS fix.
+
+4. THREE-MINUTE LOCATION RELEASE
+A reveal is one immutable batch identified by round and reveal number.
+For each active runner select the latest sample received by the reveal cutoff.
+It must have a reported capture time no more than 30 seconds before the cutoff
+and acceptable clock skew. This freshness threshold needs field validation.
+Retain capture time, receipt time and horizontal accuracy separately.
+Do not use later-arriving samples to silently revise an already published batch.
+
+Hunter markers remain stationary between reveals. Each shows actual sample
+age and an accuracy circle, plus the batch reveal time in its detail view.
+Accuracy worse than 50m is labeled 'Low accuracy'; do not imply a precise fix.
+When no fresh sample exists, show 'No fresh location'. A previous revealed
+position may remain explicitly labeled stale with its true age. Never substitute
+an unreleased location. Reconnect downloads the latest existing batch, not a
+special fresh reveal. Notifications are advisory; server state is authoritative.
+
+Runner screen shows 'Your location is shared with hunters every 3 minutes',
+the next scheduled reveal, current GPS/connection status and game time.
+Suggested sampling while active: approximately every 10–15 seconds, subject
+to device behavior and battery testing. This is a prototype target, not a promise.
+
+5. VISIBILITY AND ACCESS
+Lobby: participant names, assigned roles, ready/connection state; no GPS map.
+Head start: player sees self and boundary; organizer can see consenting players.
+Hunt: hunter sees self, boundary and released runner snapshots only.
+Runner sees self and boundary only. Caught/withdrawn player sees no player map.
+Non-playing organizer sees live active player positions and operational status.
+Playing host retains administrative controls, without organizer location access.
+Paused: show previously permitted positions frozen with a pause label.
+Finished/canceled: stop live sharing; show results without location trails.
+
+Server authorization must protect raw locations by role, round membership and
+state. Never send raw coordinates to a hunter client and hide them in the UI.
+Realtime subscriptions and push payloads must follow the same restrictions.
+Join codes admit people to a lobby; authenticated player sessions control access.
+Rate-limit code attempts. Host can lock lobby, regenerate code and remove players.
+Removed/withdrawn sessions lose all subsequent game/location access immediately.
+
+6. CAPTURE
+Runner taps 'I've been caught', then confirms or cancels in a second step.
+The dialog states that confirming ends their participation in this round.
+Server records capture time and removes runner from future reveal batches.
+Runner tracking stops; hunters' maps remove that runner's marker.
+No GPS-distance-based capture: GPS is too imprecise to adjudicate a tag.
+Capture requires server acknowledgment. Offline submission remains pending;
+do not display successful capture until acknowledged. Notify the host if needed.
+Use an idempotency key so repeated taps/retries cannot create duplicate captures.
+The host can correct or record a disputed capture with an audit reason.
+Undo returns a runner to play; tracking restarts only after their consent and
+readiness confirmation. A terminal round is not reopened by undoing a result.
+Server ordering resolves simultaneous timeout/capture events; a capture received
+at or after the round deadline does not change the outcome.
+
+7. EVENT OPERATIONS AND FAILURES
+Host dashboard: phase, game time, next reveal, role totals, active/caught counts,
+ready roster, location freshness, accuracy, connection status and boundary alerts.
+Organizers can pause, resume, remove a participant and end early. End early
+requires confirmation. Host can appoint a non-playing co-organizer in the lobby;
+only that explicitly authorized person gains organizer visibility/control.
+Participant list changes and administrative actions are logged with actor/time.
+
+Connectivity: use a heartbeat; proposed disconnected threshold is 45 seconds.
+GPS and connection are separate states. One may be healthy while the other fails.
+No automatic capture for disconnecting, poor GPS or boundary exit. Host may pause
+or remove a participant. Clearly show tracking lost and instructions to reconnect.
+Revoked permission stops sharing and flags the participant to the host.
+Force-quit/background restrictions may interrupt GPS; never promise otherwise.
+During a server outage, show connection lost and last-known state. On recovery,
+apply server deadlines and existing batches; no catch-up stream of late reveals.
+
+Boundary: circle warning based on accuracy-aware location checks; low confidence
+is labeled uncertain. Notify runner/organizer without revealing extra GPS to
+hunters. No shrinking zone or automatic elimination for the initial version.
+An in-game 'Leave round' action stops tracking immediately and queues withdrawal
+if offline. The server might see the player disconnected until that sync arrives.
+
+8. PRIVACY AND EVENT SAFETY
+Consent names who can see live versus three-minute snapshots before readiness.
+Collect GPS only in active head start/hunt, and only for active participants.
+Stop background collection on pause, capture, withdrawal, removal and round end.
+No coordinates in analytics, crash breadcrumbs or notification text.
+Proposed retention: delete raw positions and reveal snapshots within 24 hours
+of round end; retain non-location results for 30 days. Validate retention with
+organizer needs before launch; implement a scheduled cleanup and deletion checks.
+No replay, public location discovery, chat or stranger matchmaking in v1.
+Show event rules: agreed play area, on-foot play, no trespassing and agreed tags.
+Provide an easy-to-find leave action and organizer contact; this app is not an
+emergency service. Organizer briefings define physical tag rules and meeting point.
+
+9. SCREEN INVENTORY
+Welcome: create event / join by code.
+Create: event name, organizer/player choice, duration, head start, boundary.
+Join: code, display name, event details and location-sharing explanation.
+Lobby: roles, roster, readiness checklist, invite code; host settings/start controls.
+Head start: own map, countdown, tracking state and leave action.
+Hunter: map, frozen runner pins, age/accuracy detail, reveal and round timers.
+Runner: own map, reveal and round timers, tracking state, capture/leave actions.
+Host: operational dashboard, player detail, live map only for non-playing staff.
+Capture confirmation: confirm/cancel and pending/error/success states.
+Paused: frozen map, pause reason and host resume control.
+Results: winner/reason, survivors, capture/survival times; no routes.
+The accompanying wireframes illustrate the four main screens using sample data.
+
+10. IMPLEMENTATION PLAN AND ACCEPTANCE GATES
+A. Review: agree this specification and wireframes; no app features yet.
+B. GPS spike: real iPhone + Android development builds, server timestamping,
+   locked-screen uploads and protected three-minute reveal batches.
+   Validate 30–60 minutes of background use, app switching, permission changes,
+   weak connectivity and force-quit behavior; record battery and GPS freshness.
+C. Vertical slice: create/join -> ready -> head start -> hunt -> capture -> result.
+   Verify pause timing, duplicate requests, reconnect and access restrictions.
+D. Event controls: roster, co-organizer, boundary warnings, audit log and cleanup.
+E. Field trials: 6–10, then 20, then 50 participants across mixed phones.
+
+Required checks before a 50-player event:
+- A hunter cannot retrieve raw or unreleased coordinates through any API.
+- Every connected hunter reads the same numbered reveal batch.
+- Late samples do not modify a published batch; stale age remains honest.
+- Timer/reveal behavior stays consistent across pause, reconnect and host closure.
+- Capture/withdrawal/end stop client collection and server location acceptance.
+- A 50-client simulated session exercises joins, reveals, capture and reconnect.
+- Real-device event tests assess radio coverage, GPS reliability and battery use.
+- Data deletion removes retained locations according to the chosen policy.
+
+11. DECISIONS FOR NEXT REVIEW
+Proposed defaults that can be revised without changing the approved concept:
+- 3-minute head start and 45-minute hunt.
+- Non-playing organizers have a disclosed live overview.
+- No teammate visibility; no active-round late joining.
+- Boundary warnings without automatic penalties.
+- 30-second location freshness / 50m low-accuracy / 45-second disconnect thresholds.
+- 24-hour location retention and 30-day non-location results retention.
+
+IMPLEMENTATION STATUS — 24 OCTOBER 2026
+The complete first playable implementation now exists in mobile/ and server/.
+The home screen opens the full create/join/lobby/round flow. The old diagnostic
+spike is separately available from home when outside an event.
+Hosting, lobby, controls, role-specific maps, captures/results, organizer tools
+and SQLite persistence are implemented. See README.md and docs/event-runbook.md.
+Thirty server tests pass, including a complete 50-player HTTP rehearsal, restart
+recovery and cleanup. Mobile lint/typecheck, Android/iOS bundle exports and all
+20 Expo Doctor checks pass. These are not physical-phone acceptance tests.
+GPS success is an engineering assumption requested by the user, not a measured
+result. Signed native builds, real-device UI/field tests and hosted HTTPS access
+remain pending. Push notifications remain future work. Keep apps open at start
+and reopen them after resume so native tracking can activate reliably.
+SQLite is a local, single-process durable backend, rather than a deployed
+Postgres service. Active player coordinates are purged on round finish/cancel;
+abandoned events expire after 24 hours. Results, arena settings and audit records
+expire 30 days after finish. Cleanup requires a running server or startup.

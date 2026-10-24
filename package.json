@@ -1,0 +1,7 @@
+{
+  "name": "dont-get-caught-gps-spike",
+  "private": true,
+  "type": "module",
+  "scripts": { "server": "node server/index.js", "test": "node --test server/*.test.js", "verify": "npm test && npm --prefix mobile run lint && npm --prefix mobile run typecheck" },
+  "engines": { "node": ">=24" }
+}
